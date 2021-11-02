@@ -14,6 +14,10 @@ const timer = document.querySelector('.timer span');
 const timerBar = document.querySelector('.timer div');
 const showUserTimeDOM = document.querySelector(".tooltiptext")
 
+const filesUploadDOM = document.querySelector(".filesUpload")
+console.log('filesUploadDOM:', filesUploadDOM)
+
+
 media.removeAttribute('controls');
 controls.style.visibility = 'visible';
 
@@ -22,17 +26,20 @@ volumeRangeDOM.addEventListener("input", () => {
  volumeDOM.setAttribute("data-icon", "g")
 })
 
-volumeRangeDOM.addEventListener("mouseleave", () => {
- addHiddenRemoveShow(volumeRangeDOM)
+volumeDOM.addEventListener("mouseleave", (e) => {
+ let theNextButton = e.relatedTarget.tagName
+ if (theNextButton === "BUTTON" || theNextButton === "HTML") {
+  addHiddenRemoveShow(volumeRangeDOM)
+ }
 })
 
 volumeDOM.addEventListener("mouseover", () => {
  addShowRemoveHidden(volumeRangeDOM)
 })
 
-volumeDOM.addEventListener("mouseout", () => {
-  addHiddenRemoveShow(volumeRangeDOM)
- })
+volumeRangeDOM.addEventListener("mouseleave", () => {
+ addHiddenRemoveShow(volumeRangeDOM)
+})
 
 window.addEventListener("load", () => {
  volumeRangeDOM.value = volumeRangeDOM.max;
@@ -74,6 +81,17 @@ function muteAndToggle() {
 
 volumeDOM.addEventListener("click", muteAndToggle)
 
+
+volumeRangeDOM.addEventListener("input", () => {
+ if (volumeRangeDOM.value === 0) {
+  console.log('volumeRangeDOM.value:', volumeRangeDOM.value)
+  volumeDOM.setAttribute("data-icon", "g")
+  console.log("enter")
+ } else {
+  console.log("enter")
+ }
+})
+
 function playPauseMedia() {
  stopRwdAndFwd()
  addHiddenRemoveShow(showUserTimeDOM)
@@ -89,6 +107,7 @@ function playPauseMedia() {
 
 stop.addEventListener('click', stopMedia);
 media.addEventListener('ended', stopMedia);
+// media2.addEventListener('ended', stopMedia);
 
 function stopMedia() {
  media.pause();
@@ -96,6 +115,8 @@ function stopMedia() {
  play.setAttribute('data-icon', 'P');
  stopRwdAndFwd()
  addHiddenRemoveShow(showUserTimeDOM)
+ rwd.classList.add('removeHoverAndFocus');
+ fwd.classList.add('removeHoverAndFocus');
 }
 
 rwd.addEventListener('click', mediaBackward);
@@ -107,7 +128,7 @@ let intervalRwd;
 function mediaBackward() {
  clearInterval(intervalFwd);
  fwd.classList.remove('active');
-
+ rwd.classList.remove('removeHoverAndFocus');
  if (rwd.classList.contains('active')) {
   rwd.classList.remove('active');
   clearInterval(intervalRwd);
@@ -117,12 +138,13 @@ function mediaBackward() {
   media.pause();
   intervalRwd = setInterval(windBackward, 200);
  }
+
 }
 
 function mediaForward() {
  clearInterval(intervalRwd);
  rwd.classList.remove('active');
-
+ fwd.classList.remove('removeHoverAndFocus');
  if (fwd.classList.contains('active')) {
   fwd.classList.remove('active');
   clearInterval(intervalFwd);
@@ -185,6 +207,10 @@ function timeCheck(variableToUse) {
  return `${hourValue}:${minuteValue}:${secondValue}`;
 }
 
+console.log('timerWrapper.clientWidth:', timerWrapper.clientWidth)
+
+console.log('timerWrapper:', timerWrapper)
+
 function setTime() {
  let barLength = timerWrapper.clientWidth * (media.currentTime / media.duration);
  timerBar.style.width = barLength + 'px';
@@ -210,13 +236,3 @@ let showTheUserTime = (e) => {
 }
 
 timerWrapper.addEventListener("mousemove", showTheUserTime)
-
-
-var birds = document.getElementsByTagName('li');
-
-for (var i = 0;i < birds.length;i++) {
- if (birds[i].matches(':hover')) {
-  console.log('The ' + birds[i].textContent + ' is endangered!');
- }
-}
-
